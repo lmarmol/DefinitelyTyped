@@ -5,14 +5,10 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-const home = path.join(__dirname, '..');
+const types = path.join(__dirname, "..", "types");
 
-for (const dirName of fs.readdirSync(home)) {
-	if (dirName.startsWith(".") || dirName === "node_modules" || dirName === "scripts") {
-		continue;
-	}
-
-	const dir = path.join(home, dirName);
+for (const dirName of fs.readdirSync(types)) {
+	const dir = path.join(types, dirName);
 	const stats = fs.lstatSync(dir);
 	if (stats.isDirectory()) {
 		fixTsconfig(dir);
@@ -48,6 +44,9 @@ function fixCompilerOptions(config: any): any {
 	const out: any = {};
 	for (const key in config) {
 		out[key] = config[key];
+		if (key === "strictNullChecks") {
+			out.strictFunctionTypes = true;
+		}
 		// Do something interesting here
 	}
 	return out;
